@@ -149,7 +149,7 @@ class AgileBenchWidget extends WP_Widget
     if ( in_array( $new_instance['widget_type'], array( 'add_stories', 'show_current_iteration', 'show_backlog' ) ) ) {
       $instance['widget_type'] = $new_instance['widget_type'];
     } else {
-      $instance['widget_type'] = 'add_stories';
+      $instance['widget_type'] = 'show_backlog';
     }
 
     return $instance;
@@ -161,7 +161,7 @@ class AgileBenchWidget extends WP_Widget
    */
   function form($instance){
     //Defaults
-    $instance = wp_parse_args( (array) $instance, array( 'widget_type' => 'add_stories', 'api_token' => '', 'exclude' => '') );
+    $instance = wp_parse_args( (array) $instance, array( 'widget_type' => 'show_backlog', 'api_token' => '', 'exclude' => '') );
     $api_token = esc_attr( $instance['api_token'] );
     $project_id = esc_attr( $instance['project_id'] );
 
@@ -178,7 +178,9 @@ class AgileBenchWidget extends WP_Widget
       <p>
         <label for="<?php echo $this->get_field_id('widget_type'); ?>"><?php _e( 'Widget Type:' ); ?></label>
         <select name="<?php echo $this->get_field_name('widget_type'); ?>" id="<?php echo $this->get_field_id('widget_type'); ?>" class="widefat">
-          <option value="add_stories"<?php selected( $instance['widget_type'], 'add_stories' ); ?>><?php _e('Add Stories'); ?></option>
+<?php
+//         <option value="add_stories"<?php selected( $instance['widget_type'], 'add_stories' ); ?>><?php _e('Add Stories'); ?></option>
+?>
           <option value="show_current_iteration"<?php selected( $instance['widget_type'], 'show_current_iteration' ); ?>><?php _e('Show Current Iteration'); ?></option>
           <option value="show_backlog"<?php selected( $instance['widget_type'], 'show_backlog' ); ?>><?php _e( 'Show Backlog' ); ?></option>
         </select>
