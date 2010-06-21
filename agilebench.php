@@ -10,7 +10,8 @@
  *        love to hear it!<
  */
 
-define('AGILEBENCH_HOST', "http://127.0.0.1:3000");
+// define('AGILEBENCH_HOST', "http://127.0.0.1:3000");
+define('AGILEBENCH_HOST', "http://agilebench.com");
 
 // From: http://wezfurlong.org/blog/2006/nov/http-post-from-php-without-curl
 function do_post_request($url, $data, $optional_headers)
@@ -21,7 +22,9 @@ function do_post_request($url, $data, $optional_headers)
 function do_request($url, $data, $optional_headers = null, $method = "GET")
 {
   $params = array('http' => array('method' => $method,
-                                  'content' => $data ));
+                                  'content' => $data,
+                                  'ignore_errors' => true));
+
   if ($optional_headers !== null) {
     $params['http']['header'] = $optional_headers;
   }
@@ -34,12 +37,16 @@ function do_request($url, $data, $optional_headers = null, $method = "GET")
   }
 
   $response = @stream_get_contents($fp);
+  $return_code = @explode(' ', $http_response_header[0]);
+  $return_code = (int)$return_code[1];
+
+  // echo var_dump($return_code);
 
   if ($response === false) {
     throw new Exception("Problem reading data from $url, $php_errormsg");
   }
 
-  return $response;
+  return array($return_code, $response);
 }
 
 class AgileBenchWidget extends WP_Widget
@@ -99,13 +106,21 @@ class AgileBenchWidget extends WP_Widget
 
   function show_iteration($api_token, $project_id, $uri) {
     $jsObj = new Moxiecode_JSON();
-    $ab_data = do_request($uri,
-                          nil,
-                          'X-AgileBench-Token: ' . $api_token . "\r\n" .
-                          "Content-Type: application/json\r\n");
+    $response = do_request($uri,
+                           nil,
+                           'X-AgileBench-Token: ' . $api_token . "\r\n" .
+                           "Content-Type: application/json\r\n");
+    $return_code = $response[0];
+    $ab_data = $response[1];
 
     //decodes supplied JSON to a PHP array
     $json_array = $jsObj->decode($ab_data);
+
+    if($return_code >= 400 && $return_code < 500) {
+      echo $json_array["error"];
+      return;
+    }
+
     $title = $json_array["iteration"]["title"];
 
     echo $before_widget;
