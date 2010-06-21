@@ -6,6 +6,8 @@
  * Description: This plugin can either display an entire backlog, the current iteration or a story entry field.
  * Author: Mark Mansour
  * Author URI: http://agilebench.com/
+ * Notes: We're not PHP or WordPress developers.  If you've got feedback we'd
+ *        love to hear it!<
  */
 
 define('AGILEBENCH_HOST', "http://127.0.0.1:3000");
@@ -65,15 +67,15 @@ class AgileBenchWidget extends WP_Widget
     require_once(ABSPATH."/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php");
 
     switch($widget_type) {
-    case "add_stories":
-      $this->add_stories($api_token, $project_id);
-      break;
-    case "show_current_iteration":
-      $this->show_current_iteration($api_token, $project_id);
-      break;
-    case "show_backlog":
-      $this->show_backlog($api_token, $project_id);
-      break;
+      case "add_stories":
+        $this->add_stories($api_token, $project_id);
+        break;
+      case "show_current_iteration":
+        $this->show_current_iteration($api_token, $project_id);
+        break;
+      case "show_backlog":
+        $this->show_backlog($api_token, $project_id);
+        break;
     }
   }
 
@@ -106,14 +108,12 @@ class AgileBenchWidget extends WP_Widget
     $json_array = $jsObj->decode($ab_data);
     $title = $json_array["iteration"]["title"];
 
-  ?>
-  <?php echo $before_widget ?>
-  <?php echo $before_title
+    echo $before_widget;
+    echo $before_title
       . $title
-      . $after_title; ?>
+      . $after_title;
 
-  <?php
-      // PHP 5
+    // PHP 5
     foreach ($json_array["iteration"]["stories"] as &$story) {
   ?>
       <ul class="agile_bench_story">
@@ -168,20 +168,20 @@ class AgileBenchWidget extends WP_Widget
   ?>
       <p>
         <label for="<?php echo $this->get_field_id('api_token'); ?>"><?php _e('API Token:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('api_token'); ?>" name="<?php echo $this->get_field_name('api_token'); ?>" type="text" value="<?php echo $api_token; ?>" />
-	<small><?php _e( 'Your API Token is available within your account settings' ); ?></small>
+        <small><?php _e( 'Your API Token is available within your account settings' ); ?></small>
       </p>
 
       <p>
         <label for="<?php echo $this->get_field_id('project_id'); ?>"><?php _e('Project Id:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('project_id'); ?>" name="<?php echo $this->get_field_name('project_id'); ?>" type="text" value="<?php echo $project_id; ?>" />
-	<small><?php _e( 'Your Project Id is found in your Agile Bench URL - http://agilebench.com/projects/<strong>YOUR_PROJECT_ID</strong>' ); ?></small>
+        <small><?php _e( 'Your Project Id is found in your Agile Bench URL - http://agilebench.com/projects/<strong>YOUR_PROJECT_ID</strong>' ); ?></small>
       </p>
       <p>
-	<label for="<?php echo $this->get_field_id('widget_type'); ?>"><?php _e( 'Widget Type:' ); ?></label>
-	<select name="<?php echo $this->get_field_name('widget_type'); ?>" id="<?php echo $this->get_field_id('widget_type'); ?>" class="widefat">
-	  <option value="add_stories"<?php selected( $instance['widget_type'], 'add_stories' ); ?>><?php _e('Add Stories'); ?></option>
-	  <option value="show_current_iteration"<?php selected( $instance['widget_type'], 'show_current_iteration' ); ?>><?php _e('Show Current Iteration'); ?></option>
-	  <option value="show_backlog"<?php selected( $instance['widget_type'], 'show_backlog' ); ?>><?php _e( 'Show Backlog' ); ?></option>
-	</select>
+        <label for="<?php echo $this->get_field_id('widget_type'); ?>"><?php _e( 'Widget Type:' ); ?></label>
+        <select name="<?php echo $this->get_field_name('widget_type'); ?>" id="<?php echo $this->get_field_id('widget_type'); ?>" class="widefat">
+          <option value="add_stories"<?php selected( $instance['widget_type'], 'add_stories' ); ?>><?php _e('Add Stories'); ?></option>
+          <option value="show_current_iteration"<?php selected( $instance['widget_type'], 'show_current_iteration' ); ?>><?php _e('Show Current Iteration'); ?></option>
+          <option value="show_backlog"<?php selected( $instance['widget_type'], 'show_backlog' ); ?>><?php _e( 'Show Backlog' ); ?></option>
+        </select>
       </p>
 
   <?php
